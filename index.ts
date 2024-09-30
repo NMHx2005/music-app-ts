@@ -1,11 +1,9 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
 import { connectDatabase } from "./config/database";
-
-import Topic from "./models/topic.model";
-
+import { routeClient } from "./routes/client/index.route";
 
 connectDatabase();
 
@@ -16,14 +14,7 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 
 
-app.get("/topics", async (req: Request, res: Response) => {
-  const topics = await Topic.find({
-    deleted: false
-  })
-  console.log(topics);
-
-  res.render("client/pages/topics/index");
-});
+routeClient(app);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
