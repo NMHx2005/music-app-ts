@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import Topic from "../../models/topic.model";
 import Song from "../../models/song.model";
 import Singer from "../../models/singer.model";
+
+
 // [GET] /songs/:slugTopic
 export const list = async (req: Request, res: Response) => {
   const slugTopic: string = req.params.slugTopic;
@@ -24,5 +26,33 @@ export const list = async (req: Request, res: Response) => {
   res.render("client/pages/songs/list", {
     pageTitle: topic.title,
     songs: songs
+  });
+};
+
+
+
+// [GET] /songs/detail/:slugTopic
+export const detail = async (req: Request, res: Response) => {
+  const slugSong: string = req.params.slugSong;
+  
+  const song = await Song.findOne({
+    slug: slugSong,
+    deleted: false,
+    status: "active"
+  })
+
+  const singer = await Singer.findOne({
+    _id: song.singerId
+  }).select("fullName");
+
+  const topic = await Topic.findOne({
+    _id: song.topicId
+  }).select("title");
+
+  res.render("client/pages/songs/detail", {
+    song: song,
+    singer: singer,
+    topic: topic,
+    pageTitle: "Chi tiết bài hát"
   });
 };
