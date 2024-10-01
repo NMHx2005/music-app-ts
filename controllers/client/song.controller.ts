@@ -56,3 +56,37 @@ export const detail = async (req: Request, res: Response) => {
     pageTitle: "Chi tiết bài hát"
   });
 };
+
+
+
+// [PATCH] /songs/like
+export const like = async (req: Request, res: Response) => {
+  const { id, type } = req.body;
+
+  const song = await Song.findOne({
+    _id: id,
+    deleted: false,
+    status: "active"
+  });
+
+  let updateLike = song.like;
+
+  if(type == "like") {
+    updateLike++;
+  } else {
+    updateLike--;
+  }
+
+  await Song.updateOne({
+    _id: id,
+    status: "active",
+    deleted: false
+  }, {
+    like: updateLike
+  })
+  res.json({
+    code: 200,
+    updateLike: updateLike,
+    message: "Cập nhật thành công"
+  })
+}
