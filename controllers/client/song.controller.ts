@@ -101,8 +101,8 @@ export const like = async (req: Request, res: Response) => {
 }
 
 
-// [PATCH] /songs/favorite
-export const favorite = async (req: Request, res: Response) => {
+// [PATCH] /songs/favoritePatch
+export const favoritePatch = async (req: Request, res: Response) => {
   const { id } = req.body;
   const data = {
     // userId: res.locals.user.id,
@@ -122,3 +122,30 @@ export const favorite = async (req: Request, res: Response) => {
     status: status
   });
 };
+
+
+// [GET] /songs/favorite
+export const favorite = async (req: Request, res: Response) => {
+  const songs = await FavoriteSong.find({
+    // userId: res.locals.user.id
+  });
+
+  for (const song of songs) {
+    // Lấy ra id của ca sĩ và tên của bài hát cùng với 1 số thuộc tính cần thiết
+    const infoSong = await Song.findOne({
+      _id: song.songId
+    }).select("title avatar singerId slug");
+
+    const infoSinger = await Singer.findOne({
+      _id: infoSong.singerId
+    }).select("fullName");
+
+    song["infoSong"] = infoSong;
+    song["infoSinger"] = infoSinger;
+  }
+  res.render("client/pages/songs/favorite", {
+    pageTitle: "Bài hát yêu thích",
+    songs: songs
+  });
+}
+
