@@ -111,3 +111,48 @@ if(listButtonFavorite) {
 // End Favorite
 
 
+// Search Suggest 
+const boxSearch = document.querySelector(".box-search");
+if(boxSearch) {
+  // Lấy ra giá trị cần tìm kiếm
+  const input = boxSearch.querySelector("input[name='keyword']");
+  
+  // Khi mỗi lần keyup vào bàn phím thì nó sẽ chạy vào đây
+  input.addEventListener("keyup", () => {
+    // Lấy ra giá trị cần tìm kiếm của ô input
+    const keyword = input.value;
+
+    // Lấy giá trị từ APi cần được gọi
+    fetch(`/search/suggest?keyword=${keyword}`)
+      .then(res => res.json())
+      .then(data => {
+        if(data.code == 200) {
+          const songs = data.songs;
+          const innerSuggest = boxSearch.querySelector(".inner-suggest");
+          const innerList = boxSearch.querySelector(".inner-list");
+
+          if(songs.length > 0) {
+            const htmlArray = songs.map(item => `
+              <a class="inner-item" href="/songs/detail/${item.slug}">
+                <div class="inner-image">
+                  <img src="${item.avatar}">
+                </div>
+                <div class="inner-info">
+                  <div class="inner-title">${item.title}</div>
+                  <div class="inner-singer">
+                    <i class="fa-solid fa-microphone-lines"></i> ${item.singer.fullName}
+                  </div>
+                  </div>
+              </a>  
+            `)
+            innerList.innerHTML = htmlArray.join("");
+            innerSuggest.classList.add("show");
+          } else {
+            innerList.innerHTML = "";
+            innerSuggest.classList.remove("show");
+          }
+        }
+      })
+  });
+}
+// End Search Suggest 
