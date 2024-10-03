@@ -17,11 +17,11 @@ export const result = async (req: Request, res: Response) => {
     const keyWordSlugRegex = new RegExp(keywordSlug, "i");
     const keyWordRegex = new RegExp(keyword, "i");
 
-    // const songsDetail = [];
-    let songs = [];
+    const songsDetail = [];
+    // let songs = [];
 
     if(keyword) {
-        songs = await Song.find({
+        const songs = await Song.find({
           $or: [
             { slug: keyWordSlugRegex },
             { title: keyWordRegex }
@@ -36,15 +36,31 @@ export const result = async (req: Request, res: Response) => {
             deleted: false
           }).select("fullName");
       
-          item["singer"] = singer;
+          songsDetail.push({
+            id: item.id,
+            avatar: item.avatar,
+            title: item.title,
+            like: item.like,
+            slug: item.slug,
+            singer: {
+              fullName: singer.fullName
+            },
+          });
         }
     }
 
-    
+
     // Trả dữ liểu ra giao diện
-    res.render("client/pages/search/result", {
-        pageTitle: `Kết quả tìm kiếm: ${keyword}`,
-        keyword: keyword,
-        songs: songs
-    })
+    if(type == "result") {
+        res.render("client/pages/search/result", {
+          pageTitle: `Kết quả: ${keyword}`,
+          keyword: keyword,
+          songs: songsDetail
+        });
+      } else {
+        res.json({
+          code: 200,
+          songs: songsDetail
+        });
+      }
 };
