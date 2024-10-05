@@ -5,6 +5,8 @@ dotenv.config();
 
 import { connectDatabase } from "./config/database";
 import { routeClient } from "./routes/client/index.route";
+import { routesAdmin } from "./routes/admin/index.route";
+import { systemConfig } from "./config/system";
 
 connectDatabase();
 
@@ -22,6 +24,10 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 
 app.use(express.static("public"));
+
+
+app.locals.prefixAdmin = systemConfig.prefixAdmin;
+routesAdmin(app);
 
 routeClient(app);
 
