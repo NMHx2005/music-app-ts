@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Song from "../../models/song.model";
+import Topic from "../../models/topic.model";
+import Singer from "../../models/singer.model";
 
 
 
@@ -13,5 +15,25 @@ export const index = async (req: Request, res: Response) => {
     res.render("admin/pages/songs/index", {
         pageTitle: "Trang quản lý chủ để bài hát",
         songs: songs
+    });
+};
+
+
+// [GET] /admin/songs/create
+export const create = async (req: Request, res: Response) => {
+    // Lấy ra chủ đề bài hát
+    const topics = await Topic.find({
+        deleted: false
+    }).select("title")
+
+    // Lấy ra tên ca sĩ
+    const singer = await Singer.find({
+        deleted: false
+    }).select("fullName")
+
+    res.render("admin/pages/songs/create", {
+        pageTitle: "Thêm mới bài hát",
+        topics: topics,
+        singers: singer
     });
 };
