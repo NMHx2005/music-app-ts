@@ -7,6 +7,7 @@ import { connectDatabase } from "./config/database";
 import { routeClient } from "./routes/client/index.route";
 import { routesAdmin } from "./routes/admin/index.route";
 import { systemConfig } from "./config/system";
+
 import path from "path";
 
 connectDatabase();

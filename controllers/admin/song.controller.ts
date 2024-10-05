@@ -3,6 +3,7 @@ import Song from "../../models/song.model";
 import Topic from "../../models/topic.model";
 import Singer from "../../models/singer.model";
 
+import { systemConfig } from "../../config/system";
 
 
 // [GET] /admin/dashboard
@@ -37,3 +38,11 @@ export const create = async (req: Request, res: Response) => {
         singers: singer
     });
 };
+
+
+// [POST] /admin/songs/create
+export const createPost = async (req: Request, res: Response) => {
+    const song = new Song(req.body);
+    await song.save();
+    res.redirect(`/${systemConfig.prefixAdmin}/songs`);
+}
