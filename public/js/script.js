@@ -35,18 +35,30 @@ if(aplayer) {
         avatar2.style.animationPlayState = "paused";
     });
 
-    ap.on('ended', function () {
-      fetch(`/songs/listen/${dataSong._id}`, {
-        method: "PATCH"
-      })
-        .then(res => res.json())
-        .then(data => {
-          if(data.code == 200) {
-            const innerListen = document.querySelector(".singer-detail .inner-actions .inner-listen .inner-number");
-            innerListen.innerHTML = data.listen;
-          }
-        })
+
+    let timeOutListen;
+
+    ap.on('canplay', function () {
+      timeOutListen = ap.audio.duration*4/5 * 1000;
     });
+
+
+    setTimeout(() => {
+      setTimeout(() => {
+        ap.on('ended', function () {
+          fetch(`/songs/listen/${dataSong._id}`, {
+            method: "PATCH"
+          })
+            .then(res => res.json())
+            .then(data => {
+              if(data.code == 200) {
+                const innerListen = document.querySelector(".singer-detail .inner-actions .inner-listen .inner-number");
+                innerListen.innerHTML = data.listen;
+              }
+            })
+        });
+      }, timeOutListen);
+    }, 1000);
 }
 // End APlayer
 
