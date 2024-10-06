@@ -54,3 +54,51 @@ export const createPost = async (req: Request, res: Response) => {
     await song.save();
     res.redirect(`/${systemConfig.prefixAdmin}/songs`);
 }
+
+
+// [GET] /admin/songs/edit/:id
+export const edit = async (req: Request, res: Response) => {
+    // Lấy ra id của bài hát
+    const id: string = req.params.id;
+
+    // Lấy ra thông tin bài hát cần sửa
+    const song = await Song.findOne({
+      _id: id,
+      deleted: false
+    });
+
+    const topics = await Topic.find({
+      deleted: false
+    }).select("title");
+
+    const singers = await Singer.find({
+      deleted: false
+    }).select("fullName");
+
+
+    res.render("admin/pages/songs/edit", {
+      pageTitle: "Chỉnh sửa bài hát",
+      topics: topics,
+      singers: singers,
+      song: song
+    });
+};
+// [POST] /admin/songs/edit/:id
+export const editPatch = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+
+    if(req.body.avatar) {
+      req.body.avatar = req.body.avatar[0];
+    }
+
+    if(req.body.audio) {
+      req.body.audio = req.body.audio[0];
+    }
+
+    await Song.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+    
+    res.redirect(`back`);
+}

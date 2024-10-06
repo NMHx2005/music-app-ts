@@ -7,6 +7,7 @@ import { connectDatabase } from "./config/database";
 import { routeClient } from "./routes/client/index.route";
 import { routesAdmin } from "./routes/admin/index.route";
 import { systemConfig } from "./config/system";
+import methodOverride from "method-override";
 
 import path from "path";
 
@@ -14,6 +15,9 @@ connectDatabase();
 
 const app: Express = express();
 const port: number | string = process.env.PORT || 3000;
+
+// method-override
+app.use(methodOverride('_method'));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
